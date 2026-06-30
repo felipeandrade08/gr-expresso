@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Manutenções | GR EXPRESSO</title>
+<link rel="icon" type="image/png" href="img/logo/favicon.png" />
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="css/design-system.css" rel="stylesheet">
+<style>
+  /* ---- Card de filiais credenciadas ---- */
+  .card-filiais {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 18px;
+    padding: 20px 22px;
+    color: var(--branco);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .card-filiais__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .card-filiais__titulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--fonte-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+  .card-filiais__titulo i {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,176,32,0.18);
+    color: #FFB020;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+  .card-filiais__subtitulo {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+    margin-top: 2px;
+  }
+  .card-filiais__aviso {
+    background: rgba(255,77,79,0.12);
+    border: 1px solid rgba(255,77,79,0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.83rem;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-bottom: 16px;
+  }
+  .card-filiais__aviso i { color: #FF4D4F; margin-top: 2px; flex-shrink: 0; }
+
+  .filial-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+  .chip-filial {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,176,32,0.10);
+    border: 1.5px solid rgba(255,176,32,0.35);
+    border-radius: 14px;
+    padding: 12px 18px;
+    min-width: 220px;
+  }
+  .chip-filial__icone {
+    width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,176,32,0.18);
+    color: #FFB020;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .chip-filial__nome { font-weight: 700; font-size: 0.9rem; }
+  .chip-filial__cidade { font-size: 0.78rem; color: rgba(255,255,255,0.55); margin-top: 2px; }
+  .chip-filial__badge {
+    margin-left: auto;
+    background: rgba(255,176,32,0.25);
+    color: #FFB020;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Badge de status */
+  .badge-status-ok      { background: rgba(46,204,113,0.15); color: #2ECC71; border-radius: 20px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
+  .badge-status-pendente{ background: rgba(255,176,32,0.15); color: #FFB020;  border-radius: 20px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
+  .badge-credenciada    { background: rgba(46,204,113,0.12); color: #2ECC71; border-radius: 20px; padding: 2px 8px;  font-size: 0.72rem; }
+  .badge-nao-credenciada{ background: rgba(255,77,79,0.12);  color: #FF4D4F; border-radius: 20px; padding: 2px 8px;  font-size: 0.72rem; }
+
+  /* Alerta de pendentes */
+  .alerta-pendentes {
+    background: rgba(255,176,32,0.10);
+    border: 1.5px solid rgba(255,176,32,0.3);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: none;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: background var(--transicao);
+  }
+  .alerta-pendentes:hover { background: rgba(255,176,32,0.16); }
+  .alerta-pendentes.visivel { display: flex; }
+  .alerta-pendentes__icone {
+    width: 42px; height: 42px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,176,32,0.2);
+    color: #FFB020;
+    border-radius: 11px;
+    font-size: 1.1rem;
+  }
+  .alerta-pendentes__texto strong { color: #FFB020; }
+  .alerta-pendentes__texto small  { color: rgba(255,255,255,0.55); font-size: 0.8rem; }
+
+  /* ---- Tabelas de componentes no modal ---- */
+  #tabelaVeiculo td, #tabelaReboque td,
+  #tabelaVeiculo th, #tabelaReboque th {
+    padding: 8px 10px;
+    vertical-align: middle;
+    font-size: 0.85rem;
+  }
+  #tabelaVeiculo .form-control-sm,
+  #tabelaVeiculo .form-select-sm,
+  #tabelaReboque .form-control-sm,
+  #tabelaReboque .form-select-sm {
+    font-size: 0.83rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  #tabelaVeiculo tfoot td,
+  #tabelaReboque tfoot td {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    border-top: 2px solid var(--cinza-200);
+  }
+  .modal-xl { max-width: 940px; }
+</style>
+</head>
+<body>
+
+<div id="appShell" class="app-shell">
+  <main id="conteudoPagina">
+
+    <!-- Card de filiais credenciadas -->
+    <div class="card-filiais mb-4" data-aos="fade-up">
+      <div class="card-filiais__header">
+        <div>
+          <div class="card-filiais__titulo"><i class="fa-solid fa-screwdriver-wrench"></i> Filiais credenciadas para manutenção</div>
+          <p class="card-filiais__subtitulo">Realize manutenções apenas nessas unidades para evitar penalidade</p>
+        </div>
+      </div>
+      <div class="card-filiais__aviso">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>Fazer manutenção em oficinas fora das filiais abaixo gera <strong>penalidade no ranking</strong>. Se o jogo não identificar a cidade automaticamente, você deverá informar manualmente.</span>
+      </div>
+      <div class="filial-chips" id="chipFiliais">
+        <div class="text-muted small">Carregando...</div>
+      </div>
+    </div>
+
+    <!-- Alerta de pendentes (aparece quando há itens aguardando) -->
+    <div class="alerta-pendentes mb-4" id="alertaPendentes" data-aos="fade-up" onclick="filtrarPendentes()">
+      <div class="alerta-pendentes__icone"><i class="fa-solid fa-clock"></i></div>
+      <div class="alerta-pendentes__texto">
+        <div><strong id="txtQtdPendentes">0 manutenções</strong> aguardando informações</div>
+        <small>Clique para ver e preencher os dados necessários</small>
+      </div>
+      <i class="fa-solid fa-chevron-right ms-auto" style="color:rgba(255,176,32,0.6)"></i>
+    </div>
+
+    <!-- Resumo KPIs -->
+    <div class="row g-3 mb-4" id="gridResumoManutencao" data-aos="fade-up"></div>
+
+    <!-- Gráfico -->
+    <div class="row g-3 mb-4">
+      <div class="col-12" data-aos="fade-up">
+        <div class="card-gr">
+          <div class="card-gr__header"><h3>Custo de manutenção (últimos meses)</h3></div>
+          <div class="card-gr__body"><canvas id="graficoManutencao" height="80"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3" data-aos="fade-up">
+      <div class="d-flex gap-2 flex-wrap">
+        <select class="form-select" id="filtroCaminhaoId" style="width:200px;">
+          <option value="">Todos os caminhões</option>
+        </select>
+        <select class="form-select" id="filtroStatus" style="width:160px;">
+          <option value="">Todos os status</option>
+          <option value="ok">OK</option>
+          <option value="pendente">Pendente</option>
+        </select>
+      </div>
+      <button class="btn-gr-primario" id="btnNovaManutencao">
+        <i class="fa-solid fa-screwdriver-wrench"></i> Registrar Manutenção Manual
+      </button>
+    </div>
+
+    <!-- Tabela -->
+    <div class="card-gr" data-aos="fade-up">
+      <div class="table-responsive">
+        <table class="tabela-gr">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Caminhão</th>
+              <th>Motorista</th>
+              <th>Local / Cidade</th>
+              <th>Tipo</th>
+              <th>Custo</th>
+              <th>Status</th>
+              <th>Credenciada</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="corpoTabelaManutencoes">
+            <tr><td colspan="9" class="text-center text-muted py-4">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal: Registrar manutenção manual (completo, espelho da tela do ETS2) -->
+<div class="modal fade" id="modalManutencao" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content" style="border-radius:16px;border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200); background:linear-gradient(135deg,#1a1a2e,#16213e);">
+        <div>
+          <h5 class="modal-title fonte-display fw-bold text-white" id="tituloModalManutencao">
+            <i class="fa-solid fa-screwdriver-wrench me-2" style="color:#FFB020"></i>Registrar Manutenção Manual
+          </h5>
+          <small class="text-white-50">Preencha os dados conforme a tela de oficina do ETS2</small>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="formManutencao">
+        <div class="modal-body" style="background:#f8f9fa;">
+          <input type="hidden" id="manutencaoId">
+          <input type="hidden" id="_tipoAutoDetectado" value="reparar">
+
+          <!-- Seção 1: Identificação -->
+          <div class="card-gr mb-3">
+            <div class="card-gr__header" style="padding:12px 16px;">
+              <h6 class="mb-0 fonte-display fw-bold"><i class="fa-solid fa-truck me-2"></i>Identificação</h6>
+            </div>
+            <div class="card-gr__body">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label-gr">Caminhão *</label>
+                  <select class="form-select" id="campoCaminhaoId" required></select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label-gr">Motorista</label>
+                  <select class="form-select" id="campoMotoristaId">
+                    <option value="">Não informado</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label-gr">Data/hora *</label>
+                  <input type="datetime-local" class="form-control" id="campoDataManutencao" required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção 2: Local (com verificação de filial) -->
+          <div class="card-gr mb-3">
+            <div class="card-gr__header" style="padding:12px 16px;">
+              <h6 class="mb-0 fonte-display fw-bold"><i class="fa-solid fa-location-dot me-2"></i>Local do Serviço</h6>
+            </div>
+            <div class="card-gr__body">
+              <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                  <label class="form-label-gr">Cidade *</label>
+                  <input type="text" class="form-control" id="campoCidade" placeholder="Ex: Catanduva" required oninput="verificarFilialModal()">
+                </div>
+                <div class="col-md-5">
+                  <label class="form-label-gr">Filial / Oficina *</label>
+                  <input type="text" class="form-control" id="campoLocalServico" placeholder="Ex: Filial SP" required oninput="verificarFilialModal()">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                  <div id="badgeFilialModal" class="w-100 text-center py-2 px-2 rounded" style="font-size:0.78rem;font-weight:600;background:rgba(158,158,158,0.1);color:#9E9E9E;border:1px dashed #9E9E9E;">
+                    <i class="fa-solid fa-question-circle"></i> Aguardando
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2" style="background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.2);border-radius:8px;padding:8px 12px;font-size:0.8rem;color:rgba(0,0,0,0.6);">
+                <i class="fa-solid fa-circle-info" style="color:#FFB020"></i>
+                Filiais credenciadas: <strong>Catanduva - SP (Filial SP)</strong> e <strong>Guapó - GO (Filial GO)</strong>. Manutenção fora dessas cidades gera penalidade.
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção 3: Relatório de Danos do Veículo (espelho do ETS2) -->
+          <div class="card-gr mb-3">
+            <div class="card-gr__header" style="padding:12px 16px; display:flex; align-items:center; justify-content:space-between;">
+              <h6 class="mb-0 fonte-display fw-bold"><i class="fa-solid fa-truck me-2"></i>Relatório de Danos — Veículo</h6>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="preencherAcao('veiculo','reparar')">
+                  <i class="fa-solid fa-wrench"></i> Reparar tudo
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="preencherAcao('veiculo','substituir')">
+                  <i class="fa-solid fa-rotate"></i> Substituir tudo
+                </button>
+              </div>
+            </div>
+            <div class="card-gr__body p-0">
+              <div class="table-responsive">
+                <table class="tabela-gr mb-0" id="tabelaVeiculo">
+                  <thead>
+                    <tr>
+                      <th>Componente</th>
+                      <th style="width:120px">Desgaste (%)</th>
+                      <th style="width:120px">Dano (%)</th>
+                      <th style="width:160px">Ação</th>
+                      <th style="width:130px">Custo (R$)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="corpoVeiculo"></tbody>
+                  <tfoot>
+                    <tr style="background:rgba(11,61,46,0.04);">
+                      <td colspan="4" class="text-end fw-bold pe-3" style="font-size:0.85rem;">Subtotal Veículo:</td>
+                      <td class="fw-bold" id="subtotalVeiculo">R$ 0,00</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção 4: Relatório de Danos do Reboque -->
+          <div class="card-gr mb-3">
+            <div class="card-gr__header" style="padding:12px 16px; display:flex; align-items:center; justify-content:space-between;">
+              <h6 class="mb-0 fonte-display fw-bold"><i class="fa-solid fa-trailer me-2"></i>Relatório de Danos — Reboque</h6>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="preencherAcao('reboque','reparar')">
+                  <i class="fa-solid fa-wrench"></i> Reparar tudo
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="preencherAcao('reboque','substituir')">
+                  <i class="fa-solid fa-rotate"></i> Substituir tudo
+                </button>
+              </div>
+            </div>
+            <div class="card-gr__body p-0">
+              <div class="table-responsive">
+                <table class="tabela-gr mb-0" id="tabelaReboque">
+                  <thead>
+                    <tr>
+                      <th>Componente</th>
+                      <th style="width:120px">Desgaste (%)</th>
+                      <th style="width:120px">Dano (%)</th>
+                      <th style="width:160px">Ação</th>
+                      <th style="width:130px">Custo (R$)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="corpoReboque"></tbody>
+                  <tfoot>
+                    <tr style="background:rgba(11,61,46,0.04);">
+                      <td colspan="4" class="text-end fw-bold pe-3" style="font-size:0.85rem;">Subtotal Reboque:</td>
+                      <td class="fw-bold" id="subtotalReboque">R$ 0,00</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção 5: Total e observações -->
+          <div class="card-gr">
+            <div class="card-gr__body">
+              <div class="row g-3 align-items-center">
+                <div class="col-md-4">
+                  <label class="form-label-gr">Total a pagar (R$)</label>
+                  <input type="number" step="0.01" class="form-control fw-bold" id="campoCustoTotal" placeholder="0.00" readonly
+                    style="font-size:1.1rem;font-weight:700;background:rgba(11,61,46,0.06);">
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label-gr">Observações</label>
+                  <textarea class="form-control" id="campoObservacoes" rows="2" placeholder="Detalhes adicionais sobre o serviço..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /modal-body -->
+        <div class="modal-footer" style="border-top:1px solid var(--cinza-200); justify-content:space-between;">
+          <div id="avisoFilialFooter" style="font-size:0.82rem;color:#9E9E9E;"></div>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn-gr-primario"><i class="fa-solid fa-floppy-disk"></i> Salvar Manutenção</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Resolver pendente (motorista preenche cidade + local) -->
+<div class="modal fade" id="modalResolver" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius:16px;border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200); background:rgba(255,176,32,0.06);">
+        <h5 class="modal-title fonte-display fw-bold">
+          <i class="fa-solid fa-clock" style="color:#FFB020"></i> Manutenção Pendente
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small mb-3">
+          O Launcher não conseguiu identificar o local desta manutenção.<br>
+          Preencha os dados abaixo. Se for uma filial credenciada, será aprovado automaticamente.
+        </p>
+        <input type="hidden" id="resolverManutencaoId">
+        <div class="mb-3">
+          <label class="form-label-gr">Cidade onde fez a manutenção *</label>
+          <input type="text" class="form-control" id="resolverCidade" placeholder="Ex: Catanduva">
+        </div>
+        <div class="mb-3">
+          <label class="form-label-gr">Nome da filial / oficina *</label>
+          <input type="text" class="form-control" id="resolverLocalServico" placeholder="Ex: Filial SP">
+        </div>
+        <div style="background:rgba(255,176,32,0.08);border:1px solid rgba(255,176,32,0.25);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:rgba(255,255,255,0.7);">
+          <i class="fa-solid fa-circle-info" style="color:#FFB020"></i>
+          Filiais credenciadas: <strong style="color:#FFB020">Catanduva - SP (Filial SP)</strong> e <strong style="color:#FFB020">Guapó - GO (Filial GO)</strong>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--cinza-200);">
+        <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn-gr-primario" id="btnEnviarResolver">
+          <i class="fa-solid fa-paper-plane"></i> Enviar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Regularizar pendente (admin) -->
+<div class="modal fade" id="modalRegularizar" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius:16px;border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200);">
+        <h5 class="modal-title fonte-display fw-bold">Regularizar Manutenção</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="infoPendenteAdmin" class="mb-3" style="background:var(--cinza-100);border-radius:10px;padding:12px 14px;font-size:0.85rem;"></div>
+        <input type="hidden" id="regularizarManutencaoId">
+        <div class="mb-3">
+          <label class="form-label-gr">Decisão</label>
+          <div class="d-flex gap-3">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="decisaoRegularizar" id="optPenalizar" value="penalizar" checked>
+              <label class="form-check-label" for="optPenalizar" style="color:var(--perigo);font-weight:600;">
+                <i class="fa-solid fa-gavel"></i> Penalizar motorista
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="decisaoRegularizar" id="optLiberar" value="liberar">
+              <label class="form-check-label" for="optLiberar" style="color:var(--sucesso);font-weight:600;">
+                <i class="fa-solid fa-check"></i> Liberar como correto
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-gr">Observação (opcional)</label>
+          <textarea class="form-control" id="regularizarObs" rows="2" placeholder="Motivo da decisão..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--cinza-200);">
+        <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn-gr-primario" id="btnConfirmarRegularizar">
+          <i class="fa-solid fa-gavel"></i> Confirmar decisão
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/services/api.js"></script>
+<script src="js/services/auth.js"></script>
+<script src="js/utils/formatadores.js"></script>
+<script src="js/utils/layout.js"></script>
+<script src="js/pages/manutencoes.js"></script>
+</body>
+</html>

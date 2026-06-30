@@ -1,0 +1,41 @@
+{
+  "name": "gr-expresso-backend",
+  "version": "1.0.0",
+  "description": "GR EXPRESSO - Sistema de gestão de transportadora virtual para Euro Truck Simulator 2 (ETS2)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "db:init": "node src/database/init.js",
+    "db:migrate": "node src/database/migrate.js"
+  },
+  "keywords": [
+    "ets2",
+    "transportadora",
+    "logistica",
+    "saas",
+    "express",
+    "mysql"
+  ],
+  "author": "GR EXPRESSO",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql2": "^3.10.0",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "compression": "^1.7.4",
+    "express-validator": "^7.1.0",
+    "express-rate-limit": "7.3.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

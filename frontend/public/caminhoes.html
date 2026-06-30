@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Caminhões | GR EXPRESSO</title>
+<link rel="icon" type="image/png" href="img/logo/favicon.png" />
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="css/design-system.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="appShell" class="app-shell">
+  <main id="conteudoPagina">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3" data-aos="fade-up">
+      <div class="d-flex gap-2">
+        <div class="position-relative">
+          <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--cinza-600);font-size:0.85rem;"></i>
+          <input type="text" id="campoBusca" class="form-control" placeholder="Buscar placa, marca ou modelo..." style="width:260px; padding-left:38px; border-radius:999px;">
+        </div>
+        <select class="form-select" id="filtroStatus" style="width:170px;">
+          <option value="">Todos os status</option>
+          <option value="disponivel">Disponível</option>
+          <option value="em_viagem">Em viagem</option>
+          <option value="manutencao">Manutenção</option>
+          <option value="inativo">Inativo</option>
+        </select>
+      </div>
+      <button class="btn-gr-primario" id="btnNovoCaminhao"><i class="fa-solid fa-plus"></i> Novo Caminhão</button>
+    </div>
+
+    <div class="row g-3" id="gridCaminhoes" data-aos="fade-up">
+      <div class="col-12 text-center text-muted py-5">Carregando...</div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalCaminhao" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="border-radius:16px; border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200);">
+        <h5 class="modal-title fonte-display fw-bold" id="tituloModalCaminhao">Novo Caminhão</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="formCaminhao">
+        <div class="modal-body">
+          <input type="hidden" id="caminhaoId">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label-gr">Placa *</label>
+              <input type="text" class="form-control text-uppercase" id="campoPlaca" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Marca *</label>
+              <input type="text" class="form-control" id="campoMarca" required placeholder="Scania, Volvo, MAN...">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Modelo *</label>
+              <input type="text" class="form-control" id="campoModelo" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-gr">Ano</label>
+              <input type="number" class="form-control" id="campoAno" min="2000" max="2030">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-gr">Cor</label>
+              <input type="text" class="form-control" id="campoCor">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-gr">KM atual</label>
+              <input type="number" step="0.01" class="form-control" id="campoKmAtual">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-gr">Status</label>
+              <select class="form-select" id="campoStatus">
+                <option value="disponivel">Disponível</option>
+                <option value="em_viagem">Em viagem</option>
+                <option value="manutencao">Manutenção</option>
+                <option value="inativo">Inativo</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Capacidade do tanque (L)</label>
+              <input type="number" step="0.01" class="form-control" id="campoCapacidadeTanque">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Consumo médio (km/L)</label>
+              <input type="number" step="0.01" class="form-control" id="campoConsumoMedio">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Valor de aquisição (R$)</label>
+              <input type="number" step="0.01" class="form-control" id="campoValorAquisicao">
+            </div>
+            <div class="col-12">
+              <label class="form-label-gr">Motorista responsável</label>
+              <select class="form-select" id="campoMotoristaId">
+                <option value="">Nenhum / Não atribuído</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label-gr">Observações</label>
+              <textarea class="form-control" id="campoObservacoes" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid var(--cinza-200);">
+          <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn-gr-primario"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/services/api.js"></script>
+<script src="js/services/auth.js"></script>
+<script src="js/utils/formatadores.js"></script>
+<script src="js/utils/layout.js"></script>
+<script src="js/pages/caminhoes.js"></script>
+</body>
+</html>

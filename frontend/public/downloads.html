@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GR EXPRESSO | Downloads</title>
+<link rel="icon" type="image/png" href="img/logo/logo-gr-expresso.png" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link href="css/design-system.css" rel="stylesheet">
+<style>
+
+/* ===== BASE ===== */
+html, body { height: 100%; }
+body {
+  background: var(--preto);
+  color: var(--branco);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== HERO COM FUNDO ===== */
+.dl-hero {
+  position: relative;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.dl-hero__bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(160deg, rgba(0,20,14,0.92) 0%, rgba(0,59,47,0.80) 50%, rgba(0,20,14,0.97) 100%),
+    url('img/backgrounds/frota-login.jpg') center/cover no-repeat;
+  z-index: 0;
+}
+
+.dl-hero__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(183,255,60,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(183,255,60,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 1;
+}
+
+.dl-hero__content {
+  position: relative;
+  z-index: 2;
+  padding: 64px 32px 48px;
+  max-width: 820px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.dl-hero__logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 24px rgba(183,255,60,0.4));
+  margin-bottom: 20px;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 4px 24px rgba(183,255,60,0.35)); }
+  50% { filter: drop-shadow(0 4px 40px rgba(183,255,60,0.7)); }
+}
+
+.dl-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(183,255,60,0.12);
+  border: 1px solid rgba(183,255,60,0.3);
+  color: var(--verde-limao);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 18px;
+}
+
+.dl-hero__title {
+  font-family: var(--fonte-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--branco);
+  margin-bottom: 16px;
+}
+
+.dl-hero__title span {
+  color: var(--verde-limao);
+}
+
+.dl-hero__subtitle {
+  color: rgba(255,255,255,0.65);
+  font-size: 1rem;
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ===== RODOVIA DIVISOR ===== */
+.dl-divider {
+  height: 3px;
+  background-image: repeating-linear-gradient(
+    90deg, var(--verde-limao) 0, var(--verde-limao) 18px,
+    transparent 18px, transparent 32px
+  );
+  opacity: 0.5;
+}
+
+/* ===== CARDS SEÇÃO ===== */
+.dl-section {
+  padding: 64px 0;
+  background: var(--preto);
+}
+
+.dl-section__title {
+  font-family: var(--fonte-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--verde-limao);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dl-section__title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+/* ===== CARD DE DOWNLOAD ===== */
+.dl-card {
+  background: #0A1E17;
+  border: 1px solid #1A3329;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: border-color 250ms, box-shadow 250ms, transform 250ms;
+  position: relative;
+}
+
+.dl-card:hover {
+  border-color: rgba(183,255,60,0.35);
+  box-shadow: 0 16px 60px rgba(183,255,60,0.08), 0 0 0 1px rgba(183,255,60,0.1);
+  transform: translateY(-3px);
+}
+
+.dl-card--primary {
+  background: linear-gradient(145deg, #0A2819 0%, #0E2F20 100%);
+  border-color: rgba(183,255,60,0.2);
+}
+
+.dl-card--primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--verde-limao), transparent);
+}
+
+.dl-card__header {
+  padding: 28px 28px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.dl-card__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.dl-card__icon--lime {
+  background: rgba(183,255,60,0.15);
+  color: var(--verde-limao);
+  box-shadow: 0 0 0 1px rgba(183,255,60,0.2);
+}
+
+.dl-card__icon--blue {
+  background: rgba(58,166,255,0.12);
+  color: #3AA6FF;
+  box-shadow: 0 0 0 1px rgba(58,166,255,0.2);
+}
+
+.dl-card__meta {
+  flex: 1;
+}
+
+.dl-card__label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 4px;
+}
+
+.dl-card__name {
+  font-family: var(--fonte-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--branco);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.dl-card__badge-new {
+  background: var(--verde-limao);
+  color: var(--preto);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+  display: inline-block;
+}
+
+.dl-card__body {
+  padding: 20px 28px 24px;
+}
+
+.dl-card__desc {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+
+/* ===== SPECS ===== */
+.dl-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.dl-spec {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+
+.dl-spec i {
+  width: 16px;
+  text-align: center;
+  color: rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+
+.dl-spec__label {
+  color: rgba(255,255,255,0.4);
+  min-width: 60px;
+}
+
+.dl-spec__val {
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+}
+
+/* ===== BOTÕES DE DOWNLOAD ===== */
+.dl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 10px;
+  font-family: var(--fonte-display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: all 200ms;
+  position: relative;
+  overflow: hidden;
+}
+
+.dl-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 200ms;
+}
+
+.dl-btn:hover::after {
+  background: rgba(255,255,255,0.06);
+}
+
+.dl-btn--lime {
+  background: var(--verde-limao);
+  color: #0B1F0E;
+}
+
+.dl-btn--lime:hover {
+  background: #C8FF5A;
+  color: #0B1F0E;
+  box-shadow: 0 8px 30px rgba(183,255,60,0.35);
+  transform: translateY(-1px);
+}
+
+.dl-btn--outline {
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.dl-btn--outline:hover {
+  border-color: rgba(255,255,255,0.3);
+  color: var(--branco);
+  background: rgba(255,255,255,0.04);
+}
+
+.dl-btn--blue-outline {
+  background: transparent;
+  color: #3AA6FF;
+  border: 1px solid rgba(58,166,255,0.25);
+}
+
+.dl-btn--blue-outline:hover {
+  border-color: rgba(58,166,255,0.5);
+  background: rgba(58,166,255,0.06);
+  box-shadow: 0 4px 20px rgba(58,166,255,0.15);
+}
+
+.dl-btn .dl-btn__icon {
+  font-size: 1rem;
+  transition: transform 200ms;
+}
+
+.dl-btn:hover .dl-btn__icon {
+  transform: translateY(1px);
+}
+
+/* ===== PROGRESSO / PASSO-A-PASSO ===== */
+.dl-steps {
+  background: #060F0C;
+  border: 1px solid #142118;
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-top: 12px;
+}
+
+.dl-steps__title {
+  font-family: var(--fonte-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 16px;
+}
+
+.dl-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  position: relative;
+  padding-bottom: 14px;
+}
+
+.dl-step:last-child { padding-bottom: 0; }
+
+.dl-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 28px;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255,255,255,0.06);
+}
+
+.dl-step__num {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(183,255,60,0.08);
+  border: 1px solid rgba(183,255,60,0.15);
+  color: var(--verde-limao);
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dl-step__text {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.5;
+  padding-top: 5px;
+}
+
+.dl-step__text strong {
+  color: rgba(255,255,255,0.85);
+  font-weight: 600;
+}
+
+/* ===== AVISO ===== */
+.dl-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(255,176,32,0.07);
+  border: 1px solid rgba(255,176,32,0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.5;
+}
+
+.dl-notice i {
+  color: #FFB020;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* ===== NAV TOPO ===== */
+.dl-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dl-nav__logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.dl-nav__brand {
+  font-family: var(--fonte-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--branco);
+  letter-spacing: -0.01em;
+}
+
+.dl-nav__brand span {
+  color: var(--verde-limao);
+}
+
+.dl-nav__back {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: color 180ms;
+}
+
+.dl-nav__back:hover { color: var(--verde-limao); }
+
+/* ===== FOOTER ===== */
+.dl-footer {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 28px 0;
+  text-align: center;
+  color: rgba(255,255,255,0.2);
+  font-size: 0.78rem;
+}
+
+.dl-footer span {
+  color: var(--verde-limao);
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 768px) {
+  .dl-hero__content { padding: 48px 20px 36px; }
+  .dl-section { padding: 40px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="dl-nav">
+  <img src="img/logo/logo-gr-expresso.png" alt="GR" class="dl-nav__logo">
+  <div class="dl-nav__brand">GR <span>EXPRESSO</span></div>
+  <a href="index.html" class="dl-nav__back">
+    <i class="fa-solid fa-arrow-left"></i> Voltar ao painel
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="dl-hero animate__animated animate__fadeIn">
+  <div class="dl-hero__bg"></div>
+  <div class="dl-hero__grid"></div>
+  <div class="dl-hero__content">
+    <img src="img/logo/logo-gr-expresso.png" alt="GR EXPRESSO" class="dl-hero__logo">
+    <div class="dl-hero__badge">
+      <i class="fa-solid fa-download"></i> Central de Downloads
+    </div>
+    <h1 class="dl-hero__title">
+      Tudo que você precisa para <span>jogar com a GR</span>
+    </h1>
+    <p class="dl-hero__subtitle">
+      Baixe o Launcher oficial e o Plugin do ETS2 para começar a registrar suas viagens automaticamente no sistema da transportadora.
+    </p>
+  </div>
+</section>
+
+<div class="dl-divider"></div>
+
+<!-- CARDS DE DOWNLOAD -->
+<section class="dl-section">
+  <div class="container" style="max-width: 960px;">
+
+    <div class="dl-section__title">
+      <i class="fa-solid fa-box-open"></i> Pacotes disponíveis
+    </div>
+
+    <div class="row g-4">
+
+      <!-- CARD 1: LAUNCHER -->
+      <div class="col-md-6 animate__animated animate__fadeInLeft">
+        <div class="dl-card dl-card--primary h-100">
+          <div class="dl-card__header">
+            <div class="dl-card__icon dl-card__icon--lime">
+              <i class="fa-solid fa-rocket"></i>
+            </div>
+            <div class="dl-card__meta">
+              <div class="dl-card__label">Aplicativo Principal</div>
+              <h2 class="dl-card__name">GR Expresso Launcher</h2>
+              <span class="dl-card__badge-new">Essencial</span>
+            </div>
+          </div>
+          <div class="dl-card__body">
+            <p class="dl-card__desc">
+              O Launcher é o coração do sistema. Ele faz login com sua conta, monitora suas viagens em tempo real e envia os dados de telemetria automaticamente para o painel da transportadora.
+            </p>
+
+            <div class="dl-specs">
+              <div class="dl-spec">
+                <i class="fa-brands fa-windows"></i>
+                <span class="dl-spec__label">Sistema</span>
+                <span class="dl-spec__val">Windows 10/11 (64-bit)</span>
+              </div>
+              <div class="dl-spec">
+                <i class="fa-solid fa-microchip"></i>
+                <span class="dl-spec__label">Versão</span>
+                <span class="dl-spec__val">v2.0 · Atualizado</span>
+              </div>
+              <div class="dl-spec">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span class="dl-spec__label">Segurança</span>
+                <span class="dl-spec__val">Sem vírus · Código aberto</span>
+              </div>
+            </div>
+
+            <!-- BOTÃO PRINCIPAL -->
+            <a
+              href="https://github.com/felipeandrade08/gr-expresso-launcher/releases/download/v1.0.0/setup_GR_Expresso.exe"
+              class="dl-btn dl-btn--lime mb-2"
+              download
+              id="btnLauncher"
+            >
+              <i class="fa-solid fa-download dl-btn__icon"></i>
+              Baixar Launcher (.exe)
+            </a>
+
+            <!-- AVISO: Launcher só funciona dentro do caminhão -->
+            <div style="
+              background: rgba(255,176,32,0.08);
+              border: 1.5px solid rgba(255,176,32,0.35);
+              border-left: 4px solid var(--alerta);
+              border-radius: 12px;
+              padding: 14px 16px;
+              margin-top: 16px;
+              margin-bottom: 4px;
+              display: flex;
+              gap: 12px;
+              align-items: flex-start;
+            ">
+              <i class="fa-solid fa-triangle-exclamation" style="color:var(--alerta); margin-top:2px; font-size:0.95rem; flex-shrink:0;"></i>
+              <div style="font-size:0.8rem; color:rgba(255,255,255,0.75); line-height:1.6;">
+                <div style="font-family:var(--fonte-display); font-weight:700; color:rgba(255,255,255,0.92); margin-bottom:6px; font-size:0.84rem;">
+                  Importante: o Launcher só registra quando você está no caminhão
+                </div>
+                O Launcher <strong style="color:rgba(255,255,255,0.9);">não funciona no menu do jogo</strong>, na tela de carregamento ou no mapa.
+                A telemetria só é enviada enquanto você estiver <strong style="color:rgba(255,255,255,0.9);">dentro do caminhão</strong>.
+                Sempre abra o ETS2 pelo próprio Launcher e aceite a carga <em>depois</em> de estar logado.
+              </div>
+            </div>
+
+            <div class="dl-steps mt-3">
+              <div class="dl-steps__title"><i class="fa-solid fa-list-check me-1"></i> Como instalar</div>
+              <div class="dl-step">
+                <div class="dl-step__num">1</div>
+                <div class="dl-step__text">Baixe o arquivo <strong>setup_GR_Expresso.exe</strong> acima</div>
+              </div>
+              <div class="dl-step">
+                <div class="dl-step__num">2</div>
+                <div class="dl-step__text">Execute como administrador e siga o instalador</div>
+              </div>
+              <div class="dl-step">
+                <div class="dl-step__num">3</div>
+                <div class="dl-step__text">Faça login com <strong>sua conta do painel GR Expresso</strong></div>
+              </div>
+              <div class="dl-step">
+                <div class="dl-step__num">4</div>
+                <div class="dl-step__text">Inicie o ETS2 pelo botão do Launcher — pronto!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: SDK PLUGIN -->
+      <div class="col-md-6 animate__animated animate__fadeInRight">
+        <div class="dl-card h-100">
+          <div class="dl-card__header">
+            <div class="dl-card__icon dl-card__icon--blue">
+              <i class="fa-solid fa-plug-circle-bolt"></i>
+            </div>
+            <div class="dl-card__meta">
+              <div class="dl-card__label">Plugin do Jogo</div>
+              <h2 class="dl-card__name">SDK Telemetria ETS2</h2>
+              <span style="display:inline-block;background:rgba(58,166,255,0.12);color:#3AA6FF;font-size:0.6rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;border-radius:6px;margin-top:6px;">Necessário</span>
+            </div>
+          </div>
+          <div class="dl-card__body">
+            <p class="dl-card__desc">
+              Plugin oficial <strong style="color:rgba(255,255,255,0.8);">scs-telemetry</strong> que conecta o Euro Truck Simulator 2 ao Launcher. Sem ele, a telemetria não funciona e suas viagens não são registradas.
+            </p>
+
+            <div class="dl-specs">
+              <div class="dl-spec">
+                <i class="fa-solid fa-gamepad"></i>
+                <span class="dl-spec__label">Jogo</span>
+                <span class="dl-spec__val">Euro Truck Simulator 2</span>
+              </div>
+              <div class="dl-spec">
+                <i class="fa-solid fa-file"></i>
+                <span class="dl-spec__label">Arquivo</span>
+                <span class="dl-spec__val">scs-telemetry.dll</span>
+              </div>
+              <div class="dl-spec">
+                <i class="fa-solid fa-folder-open"></i>
+                <span class="dl-spec__label">Destino</span>
+                <span class="dl-spec__val">/bin/win_x64/plugins/</span>
+              </div>
+            </div>
+
+            <!-- BOTÃO PRINCIPAL -->
+            <a
+              href="https://github.com/RenCloud/scs-sdk-plugin/releases/download/V.1.12.1/release_v_1_12_1.zip"
+              target="_blank"
+              class="dl-btn dl-btn--blue-outline mb-2"
+              id="btnPlugin"
+            >
+              <i class="fa-brands fa-github dl-btn__icon"></i>
+              Baixar Plugin (GitHub)
+            </a>
+
+            <div class="dl-notice mt-3">
+              <i class="fa-solid fa-circle-exclamation mt-1"></i>
+              <div>
+                Após baixar, copie o arquivo <strong style="color:rgba(255,255,255,0.75);">scs-telemetry.dll</strong> para a pasta <strong style="color:rgba(255,255,255,0.75);">plugins</strong> dentro do diretório de instalação do ETS2.
+              </div>
+            </div>
+
+            <div class="dl-steps mt-3">
+              <div class="dl-steps__title"><i class="fa-solid fa-list-check me-1"></i> Como instalar</div>
+              <div class="dl-step">
+                <div class="dl-step__num">1</div>
+                <div class="dl-step__text">Acesse o GitHub e baixe o <strong>scs-telemetry.dll</strong> mais recente</div>
+              </div>
+              <div class="dl-step">
+                <div class="dl-step__num">2</div>
+                <div class="dl-step__text">Navegue até: <strong>Pasta Que Esta o Jogo\Euro Truck Simulator 2\bin\x64\plugins\</strong></div>
+              </div>
+              <div class="dl-step">
+                <div class="dl-step__num">3</div>
+                <div class="dl-step__text">Cole o arquivo <strong>.dll</strong> nesta pasta (crie-a se não existir)</div>
+              </div>
+              <div class="dl-step">
+                <div class="dl-step__num">4</div>
+                <div class="dl-step__text">Reinicie o ETS2 e o Launcher detectará automaticamente</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- REQUISITOS -->
+    <div class="dl-section__title mt-5">
+      <i class="fa-solid fa-clipboard-list"></i> Requisitos do sistema
+    </div>
+
+    <div class="row g-3">
+      <div class="col-sm-6 col-lg-3">
+        <div style="background:#0A1E17;border:1px solid #1A3329;border-radius:12px;padding:18px 20px;">
+          <div style="color:var(--verde-limao);font-size:1.2rem;margin-bottom:8px;"><i class="fa-brands fa-windows"></i></div>
+          <div style="font-family:var(--fonte-display);font-size:0.8rem;color:rgba(255,255,255,0.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em;">Sistema</div>
+          <div style="font-size:0.88rem;color:rgba(255,255,255,0.8);font-weight:500;">Windows 10 / 11<br>64-bit</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div style="background:#0A1E17;border:1px solid #1A3329;border-radius:12px;padding:18px 20px;">
+          <div style="color:var(--verde-limao);font-size:1.2rem;margin-bottom:8px;"><i class="fa-solid fa-gamepad"></i></div>
+          <div style="font-family:var(--fonte-display);font-size:0.8rem;color:rgba(255,255,255,0.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em;">Jogo</div>
+          <div style="font-size:0.88rem;color:rgba(255,255,255,0.8);font-weight:500;">Euro Truck<br>Simulator 2 (Steam)</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div style="background:#0A1E17;border:1px solid #1A3329;border-radius:12px;padding:18px 20px;">
+          <div style="color:var(--verde-limao);font-size:1.2rem;margin-bottom:8px;"><i class="fa-solid fa-wifi"></i></div>
+          <div style="font-family:var(--fonte-display);font-size:0.8rem;color:rgba(255,255,255,0.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em;">Internet</div>
+          <div style="font-size:0.88rem;color:rgba(255,255,255,0.8);font-weight:500;">Conexão ativa<br>durante o jogo</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div style="background:#0A1E17;border:1px solid #1A3329;border-radius:12px;padding:18px 20px;">
+          <div style="color:var(--verde-limao);font-size:1.2rem;margin-bottom:8px;"><i class="fa-solid fa-user"></i></div>
+          <div style="font-family:var(--fonte-display);font-size:0.8rem;color:rgba(255,255,255,0.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em;">Conta</div>
+          <div style="font-size:0.88rem;color:rgba(255,255,255,0.8);font-weight:500;">Cadastro aprovado<br>no painel GR</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="dl-footer">
+  <div class="container">
+    <img src="img/logo/logo-gr-expresso.png" alt="GR" style="width:28px;opacity:0.4;margin-bottom:8px;display:block;margin-inline:auto;">
+    <div>GR <span>EXPRESSO</span> · Sistema de Gestão de Transportadora Virtual · ETS2</div>
+    <div style="margin-top:6px;">Todos os direitos reservados · Use os arquivos apenas para jogar na frota oficial.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Contagem de cliques (feedback visual)
+document.querySelectorAll('.dl-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const orig = this.innerHTML;
+    this.style.opacity = '0.7';
+    setTimeout(() => { this.style.opacity = '1'; }, 300);
+  });
+});
+</script>
+</body>
+</html>

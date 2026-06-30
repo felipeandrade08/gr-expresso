@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Notas Fiscais | GR EXPRESSO</title>
+<link rel="icon" type="image/png" href="img/logo/favicon.png" />
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="css/design-system.css" rel="stylesheet">
+<style>
+  /* ======================================================
+     DANFE — Nota Fiscal de Serviço de Transporte (visual)
+     ====================================================== */
+  .nota-documento {
+    background: #fff;
+    border: 1px solid #c8c8c8;
+    border-radius: 6px;
+    font-family: 'Arial', sans-serif;
+    font-size: 0.82rem;
+    color: #111;
+    overflow: hidden;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.10);
+    position: relative;
+  }
+
+  /* Cabeçalho */
+  .nf-danfe-header {
+    display: flex;
+    border-bottom: 2px solid var(--verde-escuro, #003B2F);
+    background: #f7f7f7;
+  }
+  .nf-danfe-emitente {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; flex: 1; border-right: 1px solid #c8c8c8;
+  }
+  .nf-danfe-logo-wrap { flex-shrink: 0; }
+  .nf-danfe-logo { width: 52px; height: 52px; object-fit: contain; }
+  .nf-danfe-emitente-nome {
+    font-weight: 800; font-size: 0.95rem;
+    color: var(--verde-escuro, #003B2F); line-height: 1.2; margin-bottom: 3px;
+  }
+  .nf-danfe-emitente-end { font-size: 0.72rem; color: #444; line-height: 1.5; }
+  .nf-danfe-titulo-wrap {
+    min-width: 180px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 14px 16px; gap: 6px;
+  }
+  .nf-danfe-titulo {
+    font-size: 0.78rem; font-weight: 800; text-align: center; text-transform: uppercase;
+    letter-spacing: 0.03em; color: var(--verde-escuro, #003B2F); line-height: 1.3;
+  }
+  .nf-danfe-numero-serie { text-align: center; }
+  .nf-danfe-numero-label { font-size: 0.62rem; color: #666; text-transform: uppercase; letter-spacing: 0.06em; }
+  .nf-danfe-numero-valor { font-size: 1.1rem; font-weight: 800; color: #111; font-family: 'Courier New', monospace; }
+  .nf-danfe-status-badge {
+    font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 3px 10px; border-radius: 20px; margin-top: 4px;
+  }
+
+  /* Chave de acesso / código de barras */
+  .nf-chave-wrap {
+    background: #f0f0f0; border-bottom: 1px solid #c8c8c8;
+    padding: 8px 16px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .nf-chave-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #555; }
+  .nf-chave-valor { font-family: 'Courier New', monospace; font-size: 0.68rem; color: #222; letter-spacing: 0.06em; word-break: break-all; text-align: center; }
+  .nf-barcode-svg { margin-top: 2px; }
+
+  /* Seções */
+  .nf-secao-titulo {
+    font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em;
+    background: var(--verde-escuro, #003B2F); color: #fff;
+    padding: 4px 12px; margin: 0 -0px;
+  }
+
+  /* Grids de campos */
+  .nf-grid-4 {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid #c8c8c8;
+  }
+  .nf-col-2 { grid-column: span 2; }
+  .nf-campo {
+    padding: 7px 10px; border-right: 1px solid #c8c8c8;
+  }
+  .nf-campo:last-child { border-right: none; }
+  .nf-label { font-size: 0.6rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .nf-valor { font-size: 0.83rem; font-weight: 600; color: #111; }
+
+  /* Tabela de itens */
+  .nf-tabela { width: 100%; border-collapse: collapse; }
+  .nf-tabela th {
+    background: #eee; font-size: 0.62rem; text-transform: uppercase;
+    letter-spacing: 0.05em; font-weight: 700; color: #444;
+    padding: 6px 10px; text-align: left; border-bottom: 1px solid #c8c8c8;
+  }
+  .nf-tabela td {
+    padding: 10px 10px; font-size: 0.82rem; border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+
+  /* Totais + impostos */
+  .nf-grid-totais { display: flex; border-top: 1px solid #c8c8c8; }
+  .nf-imposto-wrap { flex: 1; border-right: 1px solid #c8c8c8; }
+  .nf-imposto-wrap .nf-secao-titulo { margin: 0; }
+  .nf-grid-imp { display: grid; grid-template-columns: 1fr 1fr; }
+  .nf-campo-imp { padding: 7px 10px; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; }
+  .nf-campo-imp:nth-child(2n) { border-right: none; }
+  .nf-totais-wrap { min-width: 230px; padding: 14px 16px; display: flex; flex-direction: column; gap: 5px; background: #fafafa; }
+  .nf-totais-linha { display: flex; justify-content: space-between; font-size: 0.82rem; color: #444; }
+  .nf-totais-grand {
+    margin-top: 6px; padding-top: 8px; border-top: 2px solid var(--verde-escuro, #003B2F);
+    font-weight: 800; font-size: 1rem; color: var(--verde-escuro, #003B2F);
+  }
+
+  /* Observações */
+  .nf-obs { padding: 10px 12px; font-size: 0.8rem; color: #444; background: #fafafa; border-top: 1px dashed #c8c8c8; }
+
+  /* Rodapé */
+  .nf-rodape {
+    border-top: 2px solid var(--verde-escuro, #003B2F);
+    background: #f0f0f0; padding: 10px 16px;
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap;
+  }
+  .nf-rodape-col { display: flex; flex-direction: column; gap: 2px; }
+  .nf-rodape-chave { font-family: 'Courier New', monospace; font-size: 0.65rem; color: #333; word-break: break-all; max-width: 360px; }
+
+  /* Watermark cancelada */
+  .nota-watermark-cancelada {
+    position: absolute; top: 45%; left: 50%; transform: translate(-50%,-50%) rotate(-18deg);
+    font-size: 2.8rem; font-weight: 900; color: rgba(255,60,60,0.16); border: 6px solid rgba(255,60,60,0.16);
+    padding: 6px 28px; border-radius: 10px; pointer-events: none; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  .linha-clicavel { cursor: pointer; }
+
+  @media print {
+    body * { visibility: hidden; }
+    #documentoNotaFiscal, #documentoNotaFiscal * { visibility: visible; }
+    #documentoNotaFiscal { position: absolute; top: 0; left: 0; width: 100%; }
+    .modal { position: absolute !important; }
+    .nf-danfe-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .nf-secao-titulo { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div id="appShell" class="app-shell">
+  <main id="conteudoPagina">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3" data-aos="fade-up">
+      <div class="d-flex gap-2">
+        <div class="position-relative">
+          <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--cinza-600);font-size:0.85rem;"></i>
+          <input type="text" id="campoBusca" class="form-control" placeholder="Buscar por cliente ou número..." style="width:260px; padding-left:38px; border-radius:999px;">
+        </div>
+        <select class="form-select" id="filtroStatus" style="width:170px;">
+          <option value="">Todos os status</option>
+          <option value="emitida">Emitida</option>
+          <option value="paga">Paga</option>
+          <option value="pendente">Pendente</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+      </div>
+      <button class="btn-gr-primario" id="btnNovaNota"><i class="fa-solid fa-plus"></i> Emitir Nota Fiscal</button>
+    </div>
+
+    <div class="card-gr" data-aos="fade-up">
+      <div class="table-responsive">
+        <table class="tabela-gr">
+          <thead>
+            <tr><th>Número</th><th>Cliente</th><th>Viagem</th><th>Valor</th><th>Emissão</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="corpoTabelaNotas">
+            <tr><td colspan="7" class="text-center text-muted py-4">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Visualizar Nota Fiscal (documento) -->
+<div class="modal fade" id="modalVisualizarNota" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="border-radius:16px; border:none; overflow:hidden;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200);">
+        <h5 class="modal-title fonte-display fw-bold">
+          <i class="fa-solid fa-file-invoice me-2" style="color:var(--verde-escuro)"></i>Nota Fiscal
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="background:var(--cinza-100); padding:28px;">
+        <div id="documentoNotaFiscal"></div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--cinza-200);">
+        <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn-gr-primario" id="btnImprimirNota"><i class="fa-solid fa-print"></i> Imprimir / Salvar PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Emitir/Editar Nota Fiscal (apenas admin) -->
+<div class="modal fade" id="modalNota" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="border-radius:16px; border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200);">
+        <h5 class="modal-title fonte-display fw-bold" id="tituloModalNota">Emitir Nota Fiscal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="formNota">
+        <div class="modal-body">
+          <input type="hidden" id="notaId">
+          <div class="row g-3">
+            <div class="col-md-7">
+              <label class="form-label-gr">Cliente *</label>
+              <input type="text" class="form-control" id="campoCliente" required>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label-gr">CNPJ/CPF</label>
+              <input type="text" class="form-control" id="campoCnpjCpf">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Viagem vinculada</label>
+              <select class="form-select" id="campoViagemId"><option value="">Nenhuma</option></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Descrição da carga</label>
+              <input type="text" class="form-control" id="campoDescricaoCarga">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Valor total (R$) *</label>
+              <input type="number" step="0.01" class="form-control" id="campoValorTotal" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Data de emissão *</label>
+              <input type="date" class="form-control" id="campoDataEmissao" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Status</label>
+              <select class="form-select" id="campoStatus">
+                <option value="pendente">Pendente</option>
+                <option value="emitida">Emitida</option>
+                <option value="paga">Paga</option>
+                <option value="cancelada">Cancelada</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label-gr">Observações</label>
+              <textarea class="form-control" id="campoObservacoes" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid var(--cinza-200);">
+          <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn-gr-primario"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/services/api.js"></script>
+<script src="js/services/auth.js"></script>
+<script src="js/utils/formatadores.js"></script>
+<script src="js/utils/layout.js"></script>
+<script src="js/pages/notasFiscais.js"></script>
+</body>
+</html>

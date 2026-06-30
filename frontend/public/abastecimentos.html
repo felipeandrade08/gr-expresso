@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Abastecimentos | GR EXPRESSO</title>
+<link rel="icon" type="image/png" href="img/logo/favicon.png" />
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="css/design-system.css" rel="stylesheet">
+<style>
+  /* ---- Card de postos credenciados ---- */
+  .card-postos {
+    background: linear-gradient(135deg, var(--verde-escuro) 0%, #082B20 100%);
+    border-radius: 18px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+    color: var(--branco);
+  }
+  .card-postos__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .card-postos__titulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--fonte-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+  .card-postos__titulo i {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(164,255,0,0.18);
+    color: var(--verde-limao);
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+  .card-postos__subtitulo {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.65);
+    margin: 2px 0 0 48px;
+  }
+  .card-postos__busca {
+    position: relative;
+    min-width: 240px;
+    flex: 1;
+    max-width: 320px;
+  }
+  .card-postos__busca input {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: var(--branco);
+    border-radius: 10px;
+    padding: 9px 14px 9px 36px;
+    font-size: 0.88rem;
+  }
+  .card-postos__busca input::placeholder { color: rgba(255,255,255,0.45); }
+  .card-postos__busca input:focus {
+    outline: none;
+    border-color: var(--verde-limao);
+    background: rgba(255,255,255,0.12);
+  }
+  .card-postos__busca i {
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    color: rgba(255,255,255,0.45); font-size: 0.85rem;
+  }
+
+  /* Esteira animada */
+  .card-postos__esteira-wrapper {
+    overflow: hidden;
+    position: relative;
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .card-postos__esteira {
+    display: flex;
+    gap: 12px;
+    width: max-content;
+    animation: rolarPostos 38s linear infinite;
+  }
+  .card-postos__esteira-wrapper:hover .card-postos__esteira { animation-play-state: paused; }
+  @keyframes rolarPostos {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .chip-posto {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 9px 14px;
+    white-space: nowrap;
+  }
+  .chip-posto i {
+    color: var(--verde-limao);
+    font-size: 0.85rem;
+  }
+  .chip-posto__posto { font-weight: 600; font-size: 0.85rem; }
+  .chip-posto__cidade { font-size: 0.75rem; color: rgba(255,255,255,0.55); }
+  .chip-posto.chip-posto--filial {
+    background: rgba(164,255,0,0.12);
+    border-color: rgba(164,255,0,0.3);
+  }
+  .chip-posto.chip-posto--filial i { color: var(--verde-limao); }
+
+  /* Resultado de busca (grid estático, substitui a esteira ao filtrar) */
+  .card-postos__resultados {
+    display: none;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .card-postos__resultados.ativo { display: flex; }
+  .card-postos__esteira-wrapper.escondido { display: none; }
+  .card-postos__vazio {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.85rem;
+    padding: 10px 2px;
+  }
+
+  @media (max-width: 768px) {
+    .card-postos__subtitulo { margin-left: 0; }
+    .card-postos__titulo { font-size: 0.95rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="appShell" class="app-shell">
+  <main id="conteudoPagina">
+    <div class="card-postos mb-4" data-aos="fade-up">
+      <div class="card-postos__header">
+        <div>
+          <div class="card-postos__titulo"><i class="fa-solid fa-gas-pump"></i> Postos credenciados</div>
+          <p class="card-postos__subtitulo">Abasteça nesses locais e fique livre de penalidade</p>
+        </div>
+        <div class="card-postos__busca">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="buscaPostoCredenciado" placeholder="Buscar por posto ou cidade...">
+        </div>
+      </div>
+
+      <div class="card-postos__esteira-wrapper" id="wrapperEsteiraPostos">
+        <div class="card-postos__esteira" id="esteiraPostos"></div>
+      </div>
+      <div class="card-postos__resultados" id="resultadosPostos"></div>
+    </div>
+
+    <div class="row g-3 mb-4" id="gridResumoAbastecimento" data-aos="fade-up"></div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-12" data-aos="fade-up">
+        <div class="card-gr">
+          <div class="card-gr__header"><h3>Gasto de combustível (últimos meses)</h3></div>
+          <div class="card-gr__body"><canvas id="graficoCombustivel" height="80"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3" data-aos="fade-up">
+      <select class="form-select" id="filtroCaminhaoId" style="width:240px;">
+        <option value="">Todos os caminhões</option>
+      </select>
+      <button class="btn-gr-primario" id="btnNovoAbastecimento"><i class="fa-solid fa-plus"></i> Novo Abastecimento</button>
+    </div>
+
+    <!-- Alerta de pendentes -->
+    <div id="alertaPendentesAbast" style="display:none;background:rgba(255,176,32,0.10);border:1.5px solid rgba(255,176,32,0.3);border-radius:14px;padding:14px 18px;align-items:center;gap:14px;cursor:pointer;margin-bottom:12px;" onclick="filtrarPendentesAbast()">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,176,32,0.2);color:#FFB020;border-radius:11px;font-size:1.1rem;"><i class="fa-solid fa-clock"></i></div>
+        <div>
+          <div><strong id="txtQtdPendentesAbast" style="color:#FFB020">0 abastecimentos</strong> aguardando informações</div>
+          <small style="color:rgba(255,255,255,0.55);font-size:0.8rem;">Clique para filtrar os pendentes</small>
+        </div>
+        <i class="fa-solid fa-chevron-right ms-auto" style="color:rgba(255,176,32,0.6);margin-left:auto;"></i>
+      </div>
+    </div>
+
+    <div class="card-gr" data-aos="fade-up">
+      <div class="table-responsive">
+        <table class="tabela-gr">
+          <thead>
+            <tr><th>Data</th><th>Caminhão</th><th>Motorista</th><th>Posto / Cidade</th><th>Litros</th><th>Valor/L</th><th>Total</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="corpoTabelaAbastecimentos">
+            <tr><td colspan="8" class="text-center text-muted py-4">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalAbastecimento" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="border-radius:16px; border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200);">
+        <h5 class="modal-title fonte-display fw-bold" id="tituloModalAbastecimento">Novo Abastecimento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="formAbastecimento">
+        <div class="modal-body">
+          <input type="hidden" id="abastecimentoId">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-gr">Caminhão *</label>
+              <select class="form-select" id="campoCaminhaoId" required></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Motorista</label>
+              <select class="form-select" id="campoMotoristaId">
+                <option value="">Não informado</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Posto</label>
+              <input type="text" class="form-control" id="campoPosto" placeholder="Ex: Posto Shell Berlim">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">KM no momento</label>
+              <input type="number" step="0.01" class="form-control" id="campoKmNoMomento">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Litros *</label>
+              <input type="number" step="0.01" class="form-control" id="campoLitros" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Valor por litro (R$) *</label>
+              <input type="number" step="0.001" class="form-control" id="campoValorLitro" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Data/hora *</label>
+              <input type="datetime-local" class="form-control" id="campoDataAbastecimento" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label-gr">Observações</label>
+              <textarea class="form-control" id="campoObservacoes" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid var(--cinza-200);">
+          <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn-gr-primario"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/services/api.js"></script>
+<script src="js/services/auth.js"></script>
+<script src="js/utils/formatadores.js"></script>
+<script src="js/utils/layout.js"></script>
+<script src="js/pages/abastecimentos.js"></script>
+
+<!-- Modal: Motorista informa posto + cidade (pendente) -->
+<div class="modal fade" id="modalResolverAbast" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius:16px;border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200);background:rgba(255,176,32,0.06);">
+        <h5 class="modal-title fonte-display fw-bold"><i class="fa-solid fa-clock" style="color:#FFB020"></i> Abastecimento Pendente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small mb-3">O Launcher não identificou o posto ou a cidade. Preencha abaixo — se for credenciado, aprovado automaticamente.</p>
+        <input type="hidden" id="resolverAbastId">
+        <div class="mb-3">
+          <label class="form-label-gr">Nome do posto *</label>
+          <input type="text" class="form-control" id="resolverAbastPosto" placeholder="Ex: Posto Shell">
+        </div>
+        <div class="mb-3">
+          <label class="form-label-gr">Cidade *</label>
+          <input type="text" class="form-control" id="resolverAbastCidade" placeholder="Ex: Catanduva">
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--cinza-200);">
+        <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn-gr-primario" id="btnEnviarResolverAbast"><i class="fa-solid fa-paper-plane"></i> Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Admin aprova ou penaliza abastecimento pendente -->
+<div class="modal fade" id="modalRegularizarAbast" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius:16px;border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200);">
+        <h5 class="modal-title fonte-display fw-bold">Regularizar Abastecimento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="infoAbastPendenteAdmin" class="mb-3" style="background:var(--cinza-100);border-radius:10px;padding:12px 14px;font-size:0.85rem;"></div>
+        <input type="hidden" id="regularizarAbastId">
+        <div class="mb-3">
+          <label class="form-label-gr">Decisão</label>
+          <div class="d-flex gap-3 flex-wrap">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="decisaoAbast" id="optAbastAprovar" value="aprovar" checked>
+              <label class="form-check-label fw-bold" for="optAbastAprovar" style="color:var(--sucesso);"><i class="fa-solid fa-check"></i> Aprovar (sem penalidade)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="decisaoAbast" id="optAbastPenalizar" value="penalizar">
+              <label class="form-check-label fw-bold" for="optAbastPenalizar" style="color:var(--perigo);"><i class="fa-solid fa-gavel"></i> Penalizar motorista</label>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="form-label-gr">Observação (opcional)</label>
+          <textarea class="form-control" id="regularizarAbastObs" rows="2" placeholder="Motivo da decisão..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--cinza-200);">
+        <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn-gr-primario" id="btnConfirmarRegularizarAbast"><i class="fa-solid fa-check-double"></i> Confirmar decisão</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

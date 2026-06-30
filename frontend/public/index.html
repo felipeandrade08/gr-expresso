@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GR EXPRESSO | Acesso ao Sistema</title>
+<link rel="icon" type="image/png" href="img/logo/favicon.png" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="css/design-system.css" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: transparent !important;
+    font-family: var(--fonte-corpo);
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* ══ FUNDO DA PÁGINA — imagem real, quase sem escurecer ══ */
+  #fundo-pagina {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: url('img/backgrounds/frota-login.jpg');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  /* ══ PARTÍCULAS ══ */
+  #canvas-particulas {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* ══ LAYOUT ══ */
+  .tela-login {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    overflow: hidden;
+  }
+
+  /* ══ PAINEL ESQUERDO ══ */
+  .login-lateral {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 56px 64px 140px;
+    position: relative;
+  }
+
+  .login-lateral::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .login-lateral::before {
+    content: '';
+    position: absolute;
+    top: -120px; left: -120px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(164,255,0,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── Logo ── */
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: surgir 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+  }
+
+  .logo-img {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px rgba(164,255,0,0.3), 0 0 24px rgba(164,255,0,0.15);
+  }
+
+  .logo-nome {
+    font-family: var(--fonte-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.05em;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+  }
+
+  .logo-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--verde-limao);
+    background: rgba(164,255,0,0.1);
+    border: 1px solid rgba(164,255,0,0.2);
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-top: 2px;
+  }
+
+  /* ── Headline ── */
+  .headline {
+    font-family: var(--fonte-display);
+    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: translateY(24px);
+    animation: surgir 0.8s cubic-bezier(0.22,1,0.36,1) 0.25s forwards;
+  }
+
+  .headline .destaque {
+    color: var(--verde-limao);
+    position: relative;
+    display: inline-block;
+  }
+
+  .headline .destaque::after {
+    content: '';
+    position: absolute;
+    bottom: 2px; left: 0; right: 0;
+    height: 3px;
+    background: var(--verde-limao);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+
+  .subtitulo {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.85);
+    text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+    max-width: 500px;
+    line-height: 1.65;
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: surgir 0.8s cubic-bezier(0.22,1,0.36,1) 0.4s forwards;
+  }
+
+  /* ── Stats ── */
+  .stats-row {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: surgir 0.8s cubic-bezier(0.22,1,0.36,1) 0.55s forwards;
+  }
+
+  .stat-item { display: flex; flex-direction: column; gap: 4px; }
+
+  .stat-valor {
+    font-family: var(--fonte-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--verde-limao);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.75);
+    text-transform: uppercase;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+    letter-spacing: 0.08em;
+  }
+
+  .stat-divisor {
+    width: 1px;
+    background: rgba(255,255,255,0.1);
+    align-self: stretch;
+    margin: 4px 0;
+  }
+
+  /* ── Cards de bases ── */
+  .bases-titulo {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--verde-limao);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: surgir 0.8s cubic-bezier(0.22,1,0.36,1) 0.65s forwards;
+  }
+
+  .bases-titulo::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: rgba(164,255,0,0.2);
+  }
+
+  .bases-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: surgir 0.8s cubic-bezier(0.22,1,0.36,1) 0.75s forwards;
+  }
+
+  .base-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(164,255,0,0.18);
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: background 200ms, transform 200ms;
+  }
+
+  .base-card:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+  }
+
+  .base-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--verde-limao);
+    border-radius: 16px 16px 0 0;
+  }
+
+  .base-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(164,255,0,0.12);
+    color: var(--verde-limao);
+    padding: 3px 9px;
+    border-radius: 99px;
+    margin-bottom: 10px;
+  }
+
+  .base-card__badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--verde-limao);
+    border-radius: 50%;
+    animation: piscar 1.4s ease-in-out infinite;
+  }
+
+  .base-card__nome {
+    font-family: var(--fonte-display);
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .base-card__info {
+    font-size: 0.74rem;
+    color: rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 5px;
+  }
+
+  .base-card__info i { color: var(--verde-limao); font-size: 0.68rem; }
+
+  /* ══ PAINEL DIREITO — formulário com fundo animado ══ */
+  .login-form-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 40px 100px;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  /* Fundo animado exclusivo do painel de login */
+  #canvas-login {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .login-form-area::before {
+    content: '';
+    position: absolute;
+    top: 10%; bottom: 10%; left: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(164,255,0,0.2), transparent);
+    z-index: 1;
+  }
+
+  /* Card de login flutuante */
+  .card-login {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 380px;
+    background: rgba(7,14,11,0.88);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(164,255,0,0.15);
+    border-radius: 24px;
+    padding: 40px 36px;
+    box-shadow:
+      0 0 0 1px rgba(164,255,0,0.05),
+      0 32px 80px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    animation: surgir-card 0.9s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+  }
+
+  .card-login::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(164,255,0,0.4), transparent);
+    border-radius: 99px;
+  }
+
+  .card-login-titulo {
+    font-family: var(--fonte-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .card-login-subtitulo {
+    font-size: 0.84rem;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 32px;
+  }
+
+  /* ── Inputs ── */
+  .campo-grupo { margin-bottom: 16px; }
+
+  .campo-label {
+    display: block;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .campo-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-family: var(--fonte-corpo);
+    transition: border-color 200ms, background 200ms, box-shadow 200ms;
+    outline: none;
+  }
+
+  .campo-input::placeholder { color: rgba(255,255,255,0.18); }
+
+  .campo-input:focus {
+    border-color: var(--verde-limao);
+    background: rgba(164,255,0,0.04);
+    box-shadow: 0 0 0 3px rgba(164,255,0,0.1);
+  }
+
+  /* ── Botão ── */
+  .btn-entrar {
+    width: 100%;
+    padding: 13px 20px;
+    background: var(--verde-limao);
+    color: #0B3D2E;
+    font-family: var(--fonte-display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 150ms, box-shadow 150ms;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-entrar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transition: left 400ms;
+  }
+
+  .btn-entrar:hover::before { left: 100%; }
+  .btn-entrar:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(164,255,0,0.35); }
+  .btn-entrar:active { transform: translateY(0); }
+
+  /* ── Botão outline ── */
+  .btn-outline {
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    color: rgba(255,255,255,0.65);
+    font-family: var(--fonte-corpo);
+    font-size: 0.88rem;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 200ms;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-outline:hover {
+    border-color: rgba(255,255,255,0.3);
+    color: #fff;
+    background: rgba(255,255,255,0.05);
+  }
+
+  /* ── Divisor ── */
+  .divisor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .divisor::before, .divisor::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(255,255,255,0.1);
+  }
+  .divisor span { font-size: 0.72rem; color: rgba(255,255,255,0.25); }
+
+  .link-form {
+    color: var(--verde-limao);
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 150ms;
+  }
+  .link-form:hover { opacity: 0.8; }
+
+  .texto-link-central {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+    margin-top: 20px;
+  }
+
+  /* ── Erro ── */
+  .erro-msg {
+    background: rgba(255,77,79,0.1);
+    border: 1px solid rgba(255,77,79,0.2);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #ff6b6b;
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .erro-msg.visivel { display: block; }
+
+  /* ══ ALTERNÂNCIA TELAS ══ */
+  .alternar-tela { display: none; }
+  .alternar-tela.ativa { display: block; }
+
+  /* ══ RODAPÉ ══ */
+  .rodape-dinamico {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    background: linear-gradient(to top, rgba(7,14,11,0.98), rgba(7,14,11,0.7));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(164,255,0,0.08);
+  }
+
+  .rodape-criador {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .rodape-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--verde-limao), #5dde00);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fonte-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #0B3D2E;
+    flex-shrink: 0;
+  }
+
+  .rodape-texto-principal { font-size: 0.7rem; color: rgba(255,255,255,0.4); }
+  .rodape-texto-nome { font-family: var(--fonte-display); font-size: 0.76rem; font-weight: 700; color: rgba(255,255,255,0.75); }
+
+  .rodape-ping {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .rodape-ping-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--verde-limao);
+    animation: piscar-suave 2s ease-in-out infinite;
+  }
+
+  .rodape-ping-texto {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.25);
+    font-family: 'Courier New', monospace;
+  }
+
+  .rodape-sociais { display: flex; align-items: center; gap: 6px; }
+
+  .rodape-social-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 13px;
+    border-radius: 99px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    transition: all 200ms;
+  }
+
+  .rodape-social-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #fff; transform: translateY(-2px); }
+  .rodape-social-btn.instagram:hover { background: rgba(225,48,108,0.12); border-color: rgba(225,48,108,0.3); color: #e1306c; }
+  .rodape-social-btn.discord:hover   { background: rgba(88,101,242,0.12);  border-color: rgba(88,101,242,0.3);  color: #5865f2; }
+  .rodape-social-btn i { font-size: 0.76rem; }
+
+  /* ══ ANIMAÇÕES ══ */
+  @keyframes surgir { to { opacity: 1; transform: translateY(0); } }
+  @keyframes surgir-card { to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes piscar { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+  @keyframes piscar-suave { 0%,100% { opacity:1; box-shadow:0 0 6px rgba(164,255,0,0.6); } 50% { opacity:0.5; box-shadow:none; } }
+  @keyframes flutuar { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
+
+  /* ══ RESPONSIVO ══ */
+  @media (max-width: 991px) {
+    .tela-login { grid-template-columns: 1fr; overflow-y: auto; }
+    .login-lateral { display: none; }
+    .login-form-area { min-height: 100vh; padding: 40px 24px 100px; }
+    .login-form-area::before { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .rodape-dinamico { padding: 0 20px; }
+    .rodape-social-btn span { display: none; }
+    .rodape-ping { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ Fundo real ══ -->
+<div id="fundo-pagina"></div>
+
+<!-- ══ Partículas globais ══ -->
+<canvas id="canvas-particulas"></canvas>
+
+<!-- ══════════════════════════════════════════════════
+     TELA PRINCIPAL
+══════════════════════════════════════════════════ -->
+<div class="tela-login">
+
+  <!-- ── PAINEL ESQUERDO ── -->
+  <div class="login-lateral">
+
+    <div class="logo-area">
+      <img src="img/logo/logo-gr-expresso.png" alt="GR EXPRESSO" class="logo-img"
+           onerror="this.style.display='none'">
+      <div>
+        <div class="logo-nome">GR EXPRESSO</div>
+        <div class="logo-badge">ETS2 · Mapa Brasileiro</div>
+      </div>
+    </div>
+
+    <h1 class="headline">
+      Gestão Completa Da<br>
+      Sua <span class="destaque">Transportadora</span><br>
+      Virtual.
+    </h1>
+
+    <p class="subtitulo">
+      Controle viagens, frota, motoristas e financeiro do seu negócio no Mapa Brasileiro —
+      tudo em um só painel, integrado ao Euro Truck Simulator 2.
+    </p>
+
+    <!-- Stats reais da API -->
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="stat-valor" id="stat-viagens">—</span>
+        <span class="stat-label">Viagens registradas</span>
+      </div>
+      <div class="stat-divisor"></div>
+      <div class="stat-item">
+        <span class="stat-valor" id="stat-motoristas">—</span>
+        <span class="stat-label">Motoristas ativos</span>
+      </div>
+      <div class="stat-divisor"></div>
+      <div class="stat-item">
+        <span class="stat-valor">2</span>
+        <span class="stat-label">Bases operacionais</span>
+      </div>
+    </div>
+
+    <!-- Bases -->
+    <div class="bases-titulo">
+      <i class="fa-solid fa-warehouse"></i>
+      Nossas bases
+    </div>
+
+    <div class="bases-grid">
+      <div class="base-card">
+        <div class="base-card__badge">Filial SP</div>
+        <div class="base-card__nome">Catanduva — SP</div>
+        <div class="base-card__info"><i class="fa-solid fa-clock"></i> Seg–Dom 24h</div>
+        <div class="base-card__info"><i class="fa-solid fa-wrench"></i> Manutenção autorizada</div>
+        <div class="base-card__info"><i class="fa-solid fa-gas-pump"></i> Combustível disponível</div>
+      </div>
+      <div class="base-card">
+        <div class="base-card__badge">Filial GO</div>
+        <div class="base-card__nome">Guapó — GO</div>
+        <div class="base-card__info"><i class="fa-solid fa-clock"></i> Seg–Dom 24h</div>
+        <div class="base-card__info"><i class="fa-solid fa-wrench"></i> Manutenção autorizada</div>
+        <div class="base-card__info"><i class="fa-solid fa-gas-pump"></i> Combustível disponível</div>
+      </div>
+    </div>
+
+  </div><!-- /login-lateral -->
+
+  <!-- ── PAINEL DIREITO ── -->
+  <div class="login-form-area">
+
+    <!-- Canvas animado só no painel de login -->
+    <canvas id="canvas-login"></canvas>
+
+    <div style="width:100%; max-width:380px; position:relative; z-index:2;">
+
+      <!-- TELA: LOGIN -->
+      <div id="telaLogin" class="alternar-tela ativa card-login">
+        <p style="font-size:0.72rem; color:var(--verde-limao); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px;">
+          <i class="fa-solid fa-circle" style="font-size:0.45rem; vertical-align:middle; margin-right:5px; animation:piscar 1.4s infinite;"></i>
+          Sistema online
+        </p>
+        <h3 class="card-login-titulo">Bem-vindo de volta</h3>
+        <p class="card-login-subtitulo">Acesse o painel da sua transportadora.</p>
+
+        <div id="erroLogin" class="erro-msg">
+          <i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>
+          <span id="erroLoginTexto"></span>
+        </div>
+
+        <form id="formLogin" novalidate>
+          <div class="campo-grupo">
+            <label class="campo-label" for="campoEmailLogin">E-mail</label>
+            <input type="email" class="campo-input" id="campoEmailLogin"
+                   placeholder="voce@grexpresso.com" autocomplete="email" required>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label" for="campoSenhaLogin">Senha</label>
+            <input type="password" class="campo-input" id="campoSenhaLogin"
+                   placeholder="••••••••" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="btn-entrar" id="btnEntrar">
+            Entrar no sistema <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="divisor"><span>ou</span></div>
+
+        <div class="texto-link-central">
+          É motorista e ainda não tem acesso?&nbsp;
+          <a href="#" id="linkIrParaCadastro" class="link-form">Criar minha conta</a>
+        </div>
+        <div class="texto-link-central" style="margin-top:10px;">
+          Quer entrar na GR Expresso?&nbsp;
+          <a href="recrutamento.html" class="link-form"><i class="fa-solid fa-user-plus" style="font-size:0.7rem;"></i> Formulário de recrutamento</a>
+        </div>
+      </div>
+
+      <!-- TELA: CADASTRO -->
+      <div id="telaCadastro" class="alternar-tela card-login">
+        <h3 class="card-login-titulo">Criar conta de motorista</h3>
+        <p class="card-login-subtitulo">
+          Seu cadastro ficará pendente até aprovação de um administrador.
+        </p>
+
+        <form id="formCadastro" novalidate>
+          <div class="campo-grupo">
+            <label class="campo-label" for="campoNomeCadastro">Nome completo *</label>
+            <input type="text" class="campo-input" id="campoNomeCadastro" required>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label" for="campoEmailCadastro">E-mail *</label>
+            <input type="email" class="campo-input" id="campoEmailCadastro" required>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+            <div class="campo-grupo" style="margin-bottom:0;">
+              <label class="campo-label" for="campoTelefoneCadastro">Telefone</label>
+              <input type="text" class="campo-input" id="campoTelefoneCadastro">
+            </div>
+            <div class="campo-grupo" style="margin-bottom:0;">
+              <label class="campo-label" for="campoCnhCadastro">CNH</label>
+              <input type="text" class="campo-input" id="campoCnhCadastro">
+            </div>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label" for="campoSenhaCadastro">Senha *</label>
+            <input type="password" class="campo-input" id="campoSenhaCadastro"
+                   placeholder="Mínimo 6 caracteres" required>
+          </div>
+          <button type="submit" class="btn-entrar" id="btnCadastrar">
+            Criar minha conta <i class="fa-solid fa-user-plus"></i>
+          </button>
+        </form>
+
+        <div class="texto-link-central" style="margin-top:20px;">
+          Já tem uma conta?&nbsp;
+          <a href="#" id="linkIrParaLogin" class="link-form">Fazer login</a>
+        </div>
+      </div>
+
+      <!-- TELA: AGUARDANDO -->
+      <div id="telaAguardando" class="alternar-tela card-login" style="text-align:center;">
+        <div style="
+          width:72px; height:72px; border-radius:50%;
+          background:rgba(255,176,32,0.1); border:1px solid rgba(255,176,32,0.3);
+          display:flex; align-items:center; justify-content:center;
+          margin:0 auto 20px;
+          animation:flutuar 3s ease-in-out infinite;">
+          <i class="fa-solid fa-clock" style="font-size:1.6rem; color:#FFB020;"></i>
+        </div>
+        <h3 class="card-login-titulo">Cadastro enviado!</h3>
+        <p style="font-size:0.86rem; color:rgba(255,255,255,0.45); margin:10px 0 28px; line-height:1.6;">
+          Sua conta foi criada e está aguardando aprovação de um administrador.
+          Assim que aprovada, você poderá fazer login normalmente.
+        </p>
+        <button class="btn-outline" id="btnVoltarParaLoginDeAguardando">
+          <i class="fa-solid fa-arrow-left"></i> Voltar ao login
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /tela-login -->
+
+<!-- ══ RODAPÉ ══ -->
+<footer class="rodape-dinamico">
+  <div class="rodape-criador">
+    <div class="rodape-avatar">FA</div>
+    <div>
+      <div class="rodape-texto-principal">Desenvolvido por</div>
+      <div class="rodape-texto-nome">Felipe Andrade</div>
+    </div>
+  </div>
+
+  <div class="rodape-ping">
+    <div class="rodape-ping-dot"></div>
+    <span class="rodape-ping-texto" id="rodape-relogio">--:--:--</span>
+  </div>
+
+  <div class="rodape-sociais">
+    <a href="https://www.instagram.com/gresxpressovirtual/" target="_blank" rel="noopener"
+       class="rodape-social-btn instagram" title="Instagram">
+      <i class="fa-brands fa-instagram"></i>
+      <span>Instagram</span>
+    </a>
+    <a href="https://discord.gg/rPVaes9mke" target="_blank" rel="noopener"
+       class="rodape-social-btn discord" title="Discord">
+      <i class="fa-brands fa-discord"></i>
+      <span>Discord</span>
+    </a>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/services/api.js"></script>
+<script src="js/services/auth.js"></script>
+<script src="js/pages/login.js"></script>
+
+<script>
+/* ══ PARTÍCULAS GLOBAIS (leves, sobre o fundo da foto) ══ */
+(function () {
+  const canvas = document.getElementById('canvas-particulas');
+  canvas.style.willChange = 'transform';
+  const ctx = canvas.getContext('2d', { alpha: true });
+  let W = 0, H = 0, pts = [], rafId;
+
+  function resize() {
+    const nw = window.innerWidth, nh = window.innerHeight;
+    if (nw === W && nh === H) return; // só redimensiona se mudou de fato
+    W = canvas.width  = nw;
+    H = canvas.height = nh;
+    init();
+  }
+
+  function init() {
+    pts = [];
+    const n = Math.floor((W * H) / 22000);
+    for (let i = 0; i < n; i++) {
+      pts.push({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2,
+        r: Math.random() * 1.2 + 0.3,
+        a: Math.random() * 0.35 + 0.05,
+        p: Math.random() * Math.PI * 2,
+        vp: 0.015 + Math.random() * 0.015,
+      });
+    }
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of pts) {
+      p.x += p.vx; p.y += p.vy; p.p += p.vp;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      const a = p.a * (0.55 + 0.45 * Math.sin(p.p));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(164,255,0,${a.toFixed(3)})`;
+      ctx.fill();
+    }
+    rafId = requestAnimationFrame(loop);
+  }
+
+  resize(); loop();
+  window.addEventListener('resize', resize);
+})();
+
+/* ══ CANVAS ANIMADO DO PAINEL DE LOGIN (ondas + brilho) ══ */
+(function () {
+  const canvas = document.getElementById('canvas-login');
+  canvas.style.willChange = 'transform';
+  const ctx = canvas.getContext('2d', { alpha: true });
+  let W = 0, H = 0, t = 0;
+
+  function resize() {
+    const parent = canvas.parentElement;
+    const nw = parent.offsetWidth, nh = parent.offsetHeight;
+    if (nw === W && nh === H) return; // só redimensiona se mudou de fato
+    W = canvas.width  = nw;
+    H = canvas.height = nh;
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.008;
+
+    // Ondas verdes suaves
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      for (let x = 0; x <= W; x += 4) {
+        const y = H * 0.55
+          + Math.sin(x * 0.008 + t + i * 2.1) * 28
+          + Math.sin(x * 0.004 + t * 0.6 + i) * 18;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H);
+      ctx.closePath();
+      const wg = ctx.createLinearGradient(0, H * 0.4, 0, H);
+      wg.addColorStop(0, `rgba(164,255,0,${0.04 - i * 0.01})`);
+      wg.addColorStop(1, 'rgba(164,255,0,0)');
+      ctx.fillStyle = wg;
+      ctx.fill();
+    }
+
+    // Orbes flutuantes
+    const orbes = [
+      { cx: W * 0.15, cy: H * 0.2 + Math.sin(t * 0.7) * 30, r: 80, a: 0.07 },
+      { cx: W * 0.82, cy: H * 0.75 + Math.sin(t * 0.5 + 1) * 25, r: 60, a: 0.05 },
+      { cx: W * 0.5,  cy: H * 0.1  + Math.sin(t * 0.9 + 2) * 20, r: 50, a: 0.04 },
+    ];
+
+    for (const o of orbes) {
+      const rg = ctx.createRadialGradient(o.cx, o.cy, 0, o.cx, o.cy, o.r);
+      rg.addColorStop(0, `rgba(164,255,0,${o.a})`);
+      rg.addColorStop(1, 'rgba(164,255,0,0)');
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.arc(o.cx, o.cy, o.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  resize(); loop();
+  window.addEventListener('resize', resize);
+})();
+
+/* ══ RELÓGIO ══ */
+function tick() {
+  const el = document.getElementById('rodape-relogio');
+  if (el) el.textContent = new Date().toLocaleTimeString('pt-BR', { hour12: false });
+}
+tick();
+setInterval(tick, 1000);
+
+/* ══ STATS — dados reais via endpoint público ══ */
+(async function carregarStats() {
+  try {
+    const BASE = (typeof API_BASE_URL !== 'undefined') ? API_BASE_URL : '/api';
+    const resp = await fetch(BASE + '/stats-publicas');
+    const json = await resp.json();
+    if (json.sucesso && json.dados) {
+      const { total_viagens, motoristas_ativos } = json.dados;
+      document.getElementById('stat-viagens').textContent    = total_viagens.toLocaleString('pt-BR');
+      document.getElementById('stat-motoristas').textContent = motoristas_ativos.toLocaleString('pt-BR');
+    }
+  } catch (e) {
+    document.getElementById('stat-viagens').textContent    = '—';
+    document.getElementById('stat-motoristas').textContent = '—';
+  }
+})();
+</script>
+</body>
+</html>

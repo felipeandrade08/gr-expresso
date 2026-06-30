@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Recrutamento | GR EXPRESSO</title>
+<link rel="icon" type="image/png" href="img/logo/favicon.png" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="css/design-system.css" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--fundo-pagina, #070E0B);
+    font-family: var(--fonte-corpo, 'Inter', sans-serif);
+    min-height: 100vh;
+    color: #fff;
+  }
+
+  #fundo-pagina {
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url('img/backgrounds/frota-login.jpg');
+    background-size: cover; background-position: center;
+  }
+  #fundo-overlay {
+    position: fixed; inset: 0; z-index: 1;
+    background: rgba(7,14,11,0.82);
+  }
+
+  .recrutamento-wrap {
+    position: relative; z-index: 10;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding: 48px 20px 80px;
+  }
+
+  /* ── Header ── */
+  .recrut-header {
+    text-align: center; margin-bottom: 40px;
+    animation: surgir 0.7s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  .recrut-logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px; }
+  .recrut-logo img { width: 44px; height: 44px; border-radius: 10px; }
+  .recrut-logo-nome { font-family: var(--fonte-display,'Barlow Condensed',sans-serif); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.06em; }
+  .recrut-badge { display: inline-block; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; background: rgba(164,255,0,0.12); color: #A4FF00; border: 1px solid rgba(164,255,0,0.25); padding: 3px 10px; border-radius: 99px; }
+
+  .recrut-titulo {
+    font-family: var(--fonte-display,'Barlow Condensed',sans-serif);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700; line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 16px 0 12px;
+  }
+  .recrut-titulo .destaque { color: #A4FF00; }
+  .recrut-subtitulo { color: rgba(255,255,255,0.65); font-size: 0.95rem; max-width: 520px; line-height: 1.6; }
+
+  /* ── Steps ── */
+  .steps-row {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 40px; max-width: 720px; width: 100%;
+  }
+  .step-item {
+    flex: 1; min-width: 160px; max-width: 200px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(164,255,0,0.15);
+    border-radius: 16px; padding: 20px 16px; text-align: center;
+    position: relative;
+  }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(164,255,0,0.1); border: 1px solid rgba(164,255,0,0.3);
+    color: #A4FF00; font-family: var(--fonte-display,'Barlow Condensed',sans-serif);
+    font-weight: 700; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .step-titulo { font-size: 0.84rem; font-weight: 700; margin-bottom: 5px; }
+  .step-desc { font-size: 0.74rem; color: rgba(255,255,255,0.5); line-height: 1.4; }
+
+  /* ── Formulário ── */
+  .recrut-form-card {
+    width: 100%; max-width: 560px;
+    background: rgba(7,14,11,0.88);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(164,255,0,0.15);
+    border-radius: 24px;
+    padding: 40px 36px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    animation: surgir 0.8s cubic-bezier(0.22,1,0.36,1) 0.2s both;
+  }
+
+  .recrut-form-card::before {
+    content: '';
+    position: absolute; top: 0; left: 20%; right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(164,255,0,0.4), transparent);
+    border-radius: 99px;
+  }
+
+  .campo-label {
+    display: block; font-size: 0.74rem; font-weight: 600;
+    color: rgba(255,255,255,0.45); text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .campo-label .obrigatorio { color: #A4FF00; margin-left: 3px; }
+
+  .campo-input, .campo-select, .campo-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 200ms, box-shadow 200ms;
+    outline: none;
+    margin-bottom: 16px;
+  }
+  .campo-input::placeholder, .campo-textarea::placeholder { color: rgba(255,255,255,0.18); }
+  .campo-input:focus, .campo-select:focus, .campo-textarea:focus {
+    border-color: #A4FF00;
+    box-shadow: 0 0 0 3px rgba(164,255,0,0.1);
+  }
+  .campo-select option { background: #0a1a10; color: #fff; }
+  .campo-textarea { resize: vertical; min-height: 90px; }
+
+  .btn-recrutar {
+    width: 100%; padding: 14px 20px;
+    background: #A4FF00; color: #0B3D2E;
+    font-family: var(--fonte-display,'Barlow Condensed',sans-serif);
+    font-size: 0.95rem; font-weight: 700; letter-spacing: 0.04em;
+    border: none; border-radius: 12px; cursor: pointer;
+    transition: transform 150ms, box-shadow 150ms;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 8px;
+  }
+  .btn-recrutar:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(164,255,0,0.35); }
+  .btn-recrutar:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+  .btn-discord {
+    width: 100%; padding: 13px 20px;
+    background: rgba(88,101,242,0.15); color: #7289DA;
+    font-size: 0.9rem; font-weight: 700;
+    border: 1px solid rgba(88,101,242,0.35); border-radius: 12px; cursor: pointer;
+    transition: all 200ms;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    text-decoration: none; margin-top: 12px;
+  }
+  .btn-discord:hover {
+    background: rgba(88,101,242,0.25); border-color: rgba(88,101,242,0.6);
+    color: #fff; transform: translateY(-2px);
+  }
+  .btn-discord i { font-size: 1.1rem; }
+
+  .divider {
+    display: flex; align-items: center; gap: 12px; margin: 20px 0;
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+  .divider span { font-size: 0.72rem; color: rgba(255,255,255,0.25); }
+
+  .link-login { text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.35); margin-top: 20px; }
+  .link-login a { color: #A4FF00; text-decoration: none; font-weight: 600; }
+  .link-login a:hover { opacity: 0.8; }
+
+  /* ── Sucesso ── */
+  #telaSuccesso { display: none; text-align: center; }
+  #telaSuccesso.visivel { display: block; }
+  .sucesso-icone {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(164,255,0,0.1); border: 2px solid rgba(164,255,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    animation: pulsarVerde 2s ease-in-out infinite;
+  }
+  @keyframes pulsarVerde { 0%,100%{box-shadow:0 0 0 0 rgba(164,255,0,0.3)} 50%{box-shadow:0 0 0 16px rgba(164,255,0,0)} }
+
+  @keyframes surgir { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+
+<div id="fundo-pagina"></div>
+<div id="fundo-overlay"></div>
+
+<div class="recrutamento-wrap">
+
+  <!-- Header -->
+  <div class="recrut-header">
+    <div class="recrut-logo">
+      <img src="img/logo/logo-gr-expresso.png" alt="GR EXPRESSO" onerror="this.style.display='none'">
+      <span class="recrut-logo-nome">GR EXPRESSO</span>
+    </div>
+    <div class="recrut-badge"><i class="fa-solid fa-circle" style="font-size:0.4rem;vertical-align:middle;margin-right:5px;animation:piscar 1.4s infinite;"></i> Recrutamento Aberto</div>
+    <h1 class="recrut-titulo">Entre para a <span class="destaque">Frota GR</span><br>Expresso!</h1>
+    <p class="recrut-subtitulo">Preencha o formulário abaixo, vá ao nosso Discord para o processo seletivo e, após aprovado, crie sua conta no sistema.</p>
+  </div>
+
+  <!-- Passos -->
+  <div class="steps-row">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-titulo">Preencha o Formulário</div>
+      <div class="step-desc">Conta um pouco sobre você e sua experiência no ETS2.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-titulo">Entre no Discord</div>
+      <div class="step-desc">Clique no botão e fale com um membro do RH no servidor.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-titulo">Aprovação</div>
+      <div class="step-desc">Nossa equipe analisa e aprova seu recrutamento.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-titulo">Crie sua Conta</div>
+      <div class="step-desc">Após aprovado, cadastre-se no sistema e comece a rodar!</div>
+    </div>
+  </div>
+
+  <!-- Card formulário -->
+  <div class="recrut-form-card">
+
+    <!-- Formulário -->
+    <div id="telaFormulario">
+      <h3 style="font-family:var(--fonte-display,'Barlow Condensed',sans-serif);font-size:1.35rem;font-weight:700;margin-bottom:6px;">Formulário de Recrutamento</h3>
+      <p style="font-size:0.84rem;color:rgba(255,255,255,0.4);margin-bottom:24px;">Campos com <span style="color:#A4FF00;">*</span> são obrigatórios.</p>
+
+      <form id="formRecrutamento" novalidate>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label class="campo-label">Nome completo <span class="obrigatorio">*</span></label>
+            <input type="text" class="campo-input" id="rNome" placeholder="Seu nome" required>
+          </div>
+          <div>
+            <label class="campo-label">Apelido / Nick</label>
+            <input type="text" class="campo-input" id="rApelido" placeholder="Como te chamam">
+          </div>
+        </div>
+
+        <label class="campo-label">Usuário do Discord <span class="obrigatorio">*</span></label>
+        <input type="text" class="campo-input" id="rDiscord" placeholder="exemplo#1234 ou @usuario" required>
+
+        <label class="campo-label">Sua idade</label>
+        <input type="number" class="campo-input" id="rIdade" placeholder="Ex: 22" min="13" max="80">
+
+        <label class="campo-label">Experiência no ETS2 / transportadoras virtuais</label>
+        <textarea class="campo-textarea" id="rExperiencia" placeholder="Conte um pouco sobre quanto tempo joga, experiência com VTC's, etc."></textarea>
+
+        <label class="campo-label">Como conheceu a GR Expresso?</label>
+        <input type="text" class="campo-input" id="rComoConheceu" placeholder="Ex: amigo, YouTube, Discord, etc.">
+
+        <button type="submit" class="btn-recrutar" id="btnSubmeter">
+          <i class="fa-solid fa-paper-plane"></i> Enviar formulário
+        </button>
+      </form>
+
+      <div class="divider"><span>e depois</span></div>
+
+      <a href="https://discord.gg/rPVaes9mke" target="_blank" rel="noopener" class="btn-discord">
+        <i class="fa-brands fa-discord"></i>
+        Entrar no Discord da GR Expresso
+      </a>
+
+      <p class="link-login">Já tem conta aprovada? <a href="index.html">Fazer login</a></p>
+    </div>
+
+    <!-- Tela de sucesso -->
+    <div id="telaSuccesso">
+      <div class="sucesso-icone">
+        <i class="fa-solid fa-check" style="font-size:2rem;color:#A4FF00;"></i>
+      </div>
+      <h3 style="font-family:var(--fonte-display,'Barlow Condensed',sans-serif);font-size:1.5rem;font-weight:700;margin-bottom:8px;">Formulário enviado!</h3>
+      <p style="color:rgba(255,255,255,0.55);font-size:0.9rem;line-height:1.65;margin-bottom:28px;">
+        Agora entre no nosso Discord e apresente-se ao RH para continuar o processo seletivo.<br>
+        Após aprovado, você poderá criar sua conta no sistema.
+      </p>
+      <a href="https://discord.gg/rPVaes9mke" target="_blank" rel="noopener" class="btn-discord">
+        <i class="fa-brands fa-discord"></i>
+        Entrar no Discord agora
+      </a>
+      <p class="link-login" style="margin-top:20px;">Já aprovado? <a href="index.html">Criar minha conta</a></p>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/config.js"></script>
+<script src="js/services/api.js"></script>
+<script>
+(function () {
+  const form = document.getElementById('formRecrutamento');
+  const btnSubmeter = document.getElementById('btnSubmeter');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nome = document.getElementById('rNome').value.trim();
+    const discord_user = document.getElementById('rDiscord').value.trim();
+
+    if (!nome || !discord_user) {
+      Swal.fire({ icon: 'warning', title: 'Campos obrigatórios', text: 'Preencha seu nome e usuário do Discord.', confirmButtonColor: '#0B3D2E' });
+      return;
+    }
+
+    btnSubmeter.disabled = true;
+    btnSubmeter.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+    try {
+      await ApiService.post('/recrutamentos', {
+        nome,
+        apelido: document.getElementById('rApelido').value.trim() || null,
+        discord_user,
+        idade: document.getElementById('rIdade').value ? Number(document.getElementById('rIdade').value) : null,
+        experiencia: document.getElementById('rExperiencia').value.trim() || null,
+        como_conheceu: document.getElementById('rComoConheceu').value.trim() || null
+      });
+
+      document.getElementById('telaFormulario').style.display = 'none';
+      document.getElementById('telaSuccesso').classList.add('visivel');
+
+    } catch (erro) {
+      Swal.fire({ icon: 'error', title: 'Erro ao enviar', text: erro.message, confirmButtonColor: '#0B3D2E' });
+      btnSubmeter.disabled = false;
+      btnSubmeter.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar formulário';
+    }
+  });
+})();
+</script>
+<style>
+  @keyframes piscar { 0%,100%{opacity:1} 50%{opacity:0.3} }
+</style>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Viagens | GR EXPRESSO</title>
+<link rel="icon" type="image/png" href="img/logo/favicon.png" />
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="css/design-system.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="appShell" class="app-shell">
+  <main id="conteudoPagina">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3" data-aos="fade-up">
+      <div class="d-flex gap-2 flex-wrap">
+        <select class="form-select" id="filtroStatus" style="width:170px;">
+          <option value="">Todos os status</option>
+          <option value="agendada">Agendada</option>
+          <option value="em_andamento">Em andamento</option>
+          <option value="concluida">Concluída</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+        <input type="date" class="form-control" id="filtroDataInicio" style="width:160px;" title="Data inicial">
+        <input type="date" class="form-control" id="filtroDataFim" style="width:160px;" title="Data final">
+      </div>
+      <button class="btn-gr-primario" id="btnNovaViagem"><i class="fa-solid fa-plus"></i> Nova Viagem</button>
+    </div>
+
+    <div class="card-gr" data-aos="fade-up">
+      <div class="table-responsive">
+        <table class="tabela-gr">
+          <thead>
+            <tr>
+              <th>Código</th><th>Motorista</th><th>Rota</th><th>Veículo</th><th>Distância</th><th>Frete</th><th>Saída</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="corpoTabelaViagens">
+            <tr><td colspan="9" class="text-center text-muted py-4">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal de cadastro/edição -->
+<div class="modal fade" id="modalViagem" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="border-radius:16px; border:none;">
+      <div class="modal-header" style="border-bottom:1px solid var(--cinza-200);">
+        <h5 class="modal-title fonte-display fw-bold" id="tituloModalViagem">Nova Viagem</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="formViagem">
+        <div class="modal-body">
+          <input type="hidden" id="viagemId">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-gr">Motorista *</label>
+              <select class="form-select" id="campoMotoristaId" required></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Caminhão *</label>
+              <select class="form-select" id="campoCaminhaoId" required></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Reboque</label>
+              <select class="form-select" id="campoReboqueId">
+                <option value="">Nenhum</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Dificuldade</label>
+              <select class="form-select" id="campoDificuldade">
+                <option value="facil">Fácil</option>
+                <option value="media" selected>Média</option>
+                <option value="dificil">Difícil</option>
+                <option value="extrema">Extrema</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Origem *</label>
+              <input type="text" class="form-control" id="campoOrigem" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Destino *</label>
+              <input type="text" class="form-control" id="campoDestino" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Carga</label>
+              <input type="text" class="form-control" id="campoCarga" placeholder="Ex: Equipamentos eletrônicos">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Peso da carga (t)</label>
+              <input type="number" step="0.01" class="form-control" id="campoPesoCarga">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Distância (km)</label>
+              <input type="number" step="0.01" class="form-control" id="campoDistanciaKm"
+                oninput="previewFrete()" placeholder="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Valor do frete</label>
+              <div class="form-control d-flex align-items-center justify-content-between"
+                   style="background:rgba(11,61,46,0.06);cursor:default;" id="previewFreteBox">
+                <span id="previewFreteValor" style="font-weight:700;color:#FFB020;">R$ 0,00</span>
+                <small style="color:var(--cinza-400);font-size:0.75rem;">calculado por km</small>
+              </div>
+              <input type="hidden" id="campoValorFrete">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-gr">Status</label>
+              <select class="form-select" id="campoStatus">
+                <option value="agendada">Agendada</option>
+                <option value="em_andamento">Em andamento</option>
+                <option value="concluida">Concluída</option>
+                <option value="cancelada">Cancelada</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Data/hora de saída *</label>
+              <input type="datetime-local" class="form-control" id="campoDataSaida" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-gr">Data/hora de chegada</label>
+              <input type="datetime-local" class="form-control" id="campoDataChegada">
+            </div>
+            <div class="col-12">
+              <label class="form-label-gr">Observações</label>
+              <textarea class="form-control" id="campoObservacoes" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid var(--cinza-200);">
+          <button type="button" class="btn-gr-outline" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn-gr-primario"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/services/api.js"></script>
+<script src="js/services/auth.js"></script>
+<script src="js/utils/formatadores.js"></script>
+<script src="js/utils/layout.js"></script>
+<script src="js/pages/viagens.js"></script>
+</body>
+</html>
