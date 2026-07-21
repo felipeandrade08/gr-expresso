@@ -1,6 +1,8 @@
-# 🚛 GR EXPRESSO
+# 🚛 Felipinho Launcher
 
 Sistema de gestão completo para transportadora virtual de **Euro Truck Simulator 2 (ETS2)**.
+
+*Seu caminho. Sua liberdade.*
 
 Plataforma SaaS de logística com dashboard, controle de viagens, frota, motoristas, financeiro, relatórios avançados e muito mais — pronta para evoluir com integrações de Telemetria ETS2, TrucksBook e Trucky.
 
@@ -9,7 +11,7 @@ Plataforma SaaS de logística com dashboard, controle de viagens, frota, motoris
 ## 📦 Estrutura do projeto
 
 ```
-gr-expresso/
+felipinho-main/
 ├── INSTALAR.bat                # Instalação automática (rodar 1x)
 ├── INICIAR.bat                 # Abre o sistema (uso diário)
 ├── PARAR.bat                   # Encerra o sistema corretamente
@@ -177,8 +179,8 @@ Depois acesse `http://localhost:5500` (ou a porta indicada).
 
 | Cor | Hex | Uso |
 |---|---|---|
-| Verde Escuro | `#0B3D2E` | Sidebar, marca, elementos primários |
-| Verde Limão | `#A4FF00` | Ações, destaques, indicadores positivos |
+| Preto Absoluto | `#0B0B0B` | Sidebar, fundo principal, marca |
+| Dourado | `#D4A017` | Ações, destaques, indicadores positivos |
 | Preto | `#121212` | Texto, superfícies escuras |
 | Branco | `#FFFFFF` | Fundos, texto sobre escuro |
 
@@ -207,7 +209,7 @@ Tipografia: **Space Grotesk** (títulos/números) + **Inter** (corpo de texto).
 ## 🔌 Telemetria ETS2 (Launcher) — integração real
 
 Diferente de TrucksBook/Trucky (ainda não implementadas), a **Telemetria ETS2** é
-uma integração real e funcional através do **Launcher GR EXPRESSO** (aplicativo
+uma integração real e funcional através do **Felipinho Launcher** (aplicativo
 desktop em Python que lê a shared memory do jogo).
 
 O motorista faz login no Launcher com a mesma conta do site, e o aplicativo passa
@@ -237,7 +239,7 @@ npm run db:migrate
 (Instalações novas via `npm run db:init` já recebem essas tabelas automaticamente,
 pois fazem parte do `schema.sql`.)
 
-O código do Launcher fica no projeto separado `gr-expresso-telemetry/` — veja o
+O código do Launcher fica no projeto separado `felipinho-launcher-app/` — veja o
 README dele para instruções de uso e configuração (`API_URL`, `VEHICLE_PLATE`).
 
 ---
